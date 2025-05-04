@@ -1,4 +1,10 @@
-import type { MetaFunction } from "@remix-run/node";
+import type { MetaFunction, LoaderFunctionArgs } from "@remix-run/node";
+import { requireUserId } from "~/utils/session.server";
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  await requireUserId(request);
+  return null;
+}
 
 export const meta: MetaFunction = () => {
   return [

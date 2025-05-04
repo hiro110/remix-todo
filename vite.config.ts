@@ -21,6 +21,7 @@ export default defineConfig({
     }),
     tsconfigPaths(),
   ],
+  optimizeDeps: { exclude: ['@mapbox/node-pre-gyp'] },
   server: {
     host: '127.0.0.1'
   },
