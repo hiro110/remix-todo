@@ -1,8 +1,30 @@
-import type { MetaFunction, LoaderFunctionArgs } from "@remix-run/node";
-import { requireUserId } from "~/utils/session.server";
+import type { LoaderFunctionArgs, ActionFunctionArgs } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
+import { useLoaderData, Form, Link, useActionData } from "@remix-run/react";
+import { requireUserId, getUser } from "~/utils/session.server";
+import { getTodosByUser, deleteTodo, toggleTodoDone } from "~/models/todo.server";
+import type { Todo } from "~/models/todo.types";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  await requireUserId(request);
+  const userId = await requireUserId(request);
+  const todos = await getTodosByUser(userId);
+  const user = await getUser(request);
+  return json({ todos, user });
+}
+
+export async function action({ request }: ActionFunctionArgs) {
+  const userId = await requireUserId(request);
+  const formData = await request.formData();
+  const intent = formData.get("intent");
+  const todoId = formData.get("todoId") as string;
+  if (intent === "delete") {
+    await deleteTodo(todoId, userId);
+    return redirect("/");
+  }
+  if (intent === "toggle") {
+    await toggleTodoDone(todoId, userId);
+    return redirect("/");
+  }
   return null;
 }
 
@@ -14,47 +36,56 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Index() {
+  const { todos, user } = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
   return (
-    <div className="flex h-screen items-center justify-center">
-      <div className="flex flex-col items-center gap-16">
-        <header className="flex flex-col items-center gap-9">
-          <h1 className="leading text-2xl font-bold text-gray-800 dark:text-gray-100">
-            Welcome to <span className="sr-only">Remix</span>
-          </h1>
-          <div className="h-[144px] w-[434px]">
-            <img
-              src="/logo-light.png"
-              alt="Remix"
-              className="block w-full dark:hidden"
-            />
-            <img
-              src="/logo-dark.png"
-              alt="Remix"
-              className="hidden w-full dark:block"
-            />
-          </div>
-        </header>
-        <nav className="flex flex-col items-center justify-center gap-4 rounded-3xl border border-gray-200 p-6 dark:border-gray-700">
-          <p className="leading-6 text-gray-700 dark:text-gray-200">
-            What&apos;s next?
-          </p>
-          <ul>
-            {resources.map(({ href, text, icon }) => (
-              <li key={href}>
-                <a
-                  className="group flex items-center gap-3 self-stretch p-3 leading-normal text-blue-700 hover:underline dark:text-blue-500"
-                  href={href}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {icon}
-                  {text}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
+    <div className="max-w-2xl mx-auto py-8">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">{user?.username}さんのToDoリスト</h1>
+        <Link to="/todos/new" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">新規作成</Link>
       </div>
+      {todos.length === 0 ? (
+        <p className="text-gray-500">ToDoはありません。</p>
+      ) : (
+        <ul className="space-y-4">
+          {todos.map((todo) => (
+            <li key={todo.id} className="bg-white rounded shadow p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <Form method="post">
+                    <input type="hidden" name="todoId" value={todo.id} />
+                    <button
+                      type="submit"
+                      name="intent"
+                      value="toggle"
+                      className={todo.doneAt ? "text-green-600" : "text-gray-400"}
+                      title={todo.doneAt ? "未完了に戻す" : "完了にする"}
+                    >
+                      {todo.doneAt ? "✔" : "○"}
+                    </button>
+                  </Form>
+                  <span className={todo.doneAt ? "line-through text-gray-400" : "font-semibold"}>{todo.title}</span>
+                  {todo.dueDate && (
+                    <span className="ml-2 text-xs text-gray-500">期限: {String(todo.dueDate).slice(0, 10)}</span>
+                  )}
+                  {todo.doneAt && (
+                    <span className="ml-2 text-xs text-green-600">完了: {String(todo.doneAt).slice(0, 10)}</span>
+                  )}
+                </div>
+                {todo.detail && <div className="text-gray-600 text-sm mt-1">{todo.detail}</div>}
+              </div>
+              <div className="flex gap-2 mt-2 md:mt-0">
+                <Link to={`/todos/${todo.id}/edit`} className="text-blue-600 hover:underline">編集</Link>
+                <Form method="post" onSubmit={e => {if(!window.confirm('本当に削除しますか？')) e.preventDefault();}}>
+                  <input type="hidden" name="todoId" value={todo.id} />
+                  <button type="submit" name="intent" value="delete" className="text-red-600 hover:underline">削除</button>
+                </Form>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+      {actionData?.error && <div className="text-red-600 mt-4">{actionData.error}</div>}
     </div>
   );
 }
