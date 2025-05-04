@@ -1,0 +1,23 @@
+{
+    "files.watcherExclude": {
+        "**/node_modules/**": true,
+        "**/.git/**": true
+    },
+    "search.exclude": {
+        "**/.git/**": true,
+        "**/node_modules/**": true,
+        "**/.DS_Store": true
+    },
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": null,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true,
+        "source.organizeImports": true
+    },
+    "editor.suggestSelection": "first",
+    "editor.acceptSuggestionOnEnter": "smart",
+    "editor.snippetSuggestions": "top",
+    "editor.wordBasedSuggestions": true
+}
+
+
