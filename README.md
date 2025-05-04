@@ -41,7 +41,9 @@ This template comes with [Tailwind CSS](https://tailwindcss.com/) already config
 
 # memo
 
-add `server` directive
+## `npm run dev` error
+
+- add `server` directive
 ```ts
 export default defineConfig({
   plugins: [
@@ -53,8 +55,7 @@ export default defineConfig({
 });
 ```
 
-
-console error occurs 
+- console error occurs 
 ```
 ✘ [ERROR] No loader is configured for ".html" files: node_modules/@mapbox/node-pre-gyp/lib/util/nw-pre-gyp/index.html
 
@@ -107,7 +108,7 @@ node_modules/@mapbox/node-pre-gyp/lib/util/s3_setup.js:112:23: ERROR: Could not 
     at processTicksAndRejections (node:internal/process/task_queues:105:5) (x4)
 ```
 
-add `optimizeDeps` directive
+- add `optimizeDeps` directive
 ```vite.config.ts
 export default defineConfig({
   plugins: [
@@ -123,9 +124,35 @@ see: https://zenn.dev/coji/articles/a8508bae1d8fa6
 
 ## Install biome
 
-```
+- install
+```sh
 npm install --save-dev --save-exact @biomejs/biome
 npx @biomejs/biome init
+```
+
+- migrate
+```sh
+npx @biomejs/biome migrate eslint --write
+npx @biomejs/biome migrate prettier --write
+```
+
+remove `ignorePatterns` directive
+```.eslintrc.cjs
+...
+ignorePatterns: ["!**/.server", "!**/.client"],
+...
+```
+
+- check&fix
+```sh
 npx @biomejs/biome check --write
 npx @biomejs/biome check
+npx @biomejs/biome --write format ./app
+```
+
+- uninstall eslint
+```sh
+git rm .eslintrc.cjs
+npx depcheck
+npm uninstall @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-react eslint-plugin-react-hooks
 ```
