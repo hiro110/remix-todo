@@ -14,3 +14,17 @@ CREATE TABLE users (
   updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 ```
+
+## todos
+```sql
+CREATE TABLE todos (
+  id UUID PRIMARY KEY,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  detail TEXT,
+  due_date TIMESTAMP,
+  done_at TIMESTAMP,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+```
