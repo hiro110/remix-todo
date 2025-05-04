@@ -120,3 +120,12 @@ export default defineConfig({
 });
 ```
 see: https://zenn.dev/coji/articles/a8508bae1d8fa6
+
+## Install biome
+
+```
+npm install --save-dev --save-exact @biomejs/biome
+npx @biomejs/biome init
+npx @biomejs/biome check --write
+npx @biomejs/biome check
+```
