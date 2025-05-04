@@ -1,23 +1,43 @@
 {
-    "files.watcherExclude": {
-        "**/node_modules/**": true,
-        "**/.git/**": true
-    },
-    "search.exclude": {
-        "**/.git/**": true,
-        "**/node_modules/**": true,
-        "**/.DS_Store": true
-    },
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": null,
-    "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true,
-        "source.organizeImports": true
-    },
-    "editor.suggestSelection": "first",
-    "editor.acceptSuggestionOnEnter": "smart",
-    "editor.snippetSuggestions": "top",
-    "editor.wordBasedSuggestions": true
+	"files.watcherExclude": {
+		"**/node_modules/**": true,
+		"**/.git/**": true
+	},
+	"search.exclude": {
+		"**/.git/**": true,
+		"**/node_modules/**": true,
+		"**/.DS_Store": true
+	},
+	"editor.formatOnSave": true,
+	"editor.defaultFormatter": null,
+	"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": true,
+		"source.organizeImports": true
+	},
+	"editor.suggestSelection": "first",
+	"editor.acceptSuggestionOnEnter": "smart",
+	"editor.snippetSuggestions": "top",
+	"editor.wordBasedSuggestions": true,
+	"[javascript]": {
+    	// .jsファイルのデフォルトフォーマッタをbiomeに変更
+    	"editor.defaultFormatter": "biomejs.biome" 
+	},
+	"[javascriptreact]": {
+		// .jsxファイルのデフォルトフォーマッタをbiomeに変更
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[typescript]": {
+		// .tsファイルのデフォルトフォーマッタをbiomeに変更
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[typescriptreact]": {
+		// .tsxファイルのデフォルトフォーマッタをbiomeに変更
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"editor.codeActionsOnSave": {
+		// ファイル保存時にフォーマッタを実行
+		"quickfix.biome": "explicit"
+		// インポートの並び替えを実行(実験的機能)
+		// "source.organizeImports.biome": "explicit"
+	},
 }
-
-
